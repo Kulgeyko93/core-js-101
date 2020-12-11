@@ -19,8 +19,8 @@
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return new Date(value);
 }
 
 /**
@@ -34,8 +34,8 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
 
 
@@ -53,8 +53,15 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = d.getMonth();
+  const newData = new Date(year, month, 29);
+  if (newData.getMonth() === 1) {
+    return true;
+  }
+  return false;
 }
 
 
@@ -73,10 +80,40 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  const ms = endDate - startDate;
+  const hours = Math.floor((ms) / (60 * 60 * 1000));
+  const hoursms = ms % (60 * 60 * 1000);
+  const minutes = Math.floor((hoursms) / (60 * 1000));
+  const minutesms = ms % (60 * 1000);
+  const sec = Math.floor((minutesms) / (1000));
+  const millisec = ms - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - sec * 1000;
+  let resHours;
+  let resMinutes;
+  let resSec;
+  let resMilli;
+  if (hours < 10) {
+    resHours = `0${hours}`;
+  } else {
+    resHours = `${hours}`;
+  }
+  if (minutes < 10) {
+    resMinutes = `0${minutes}`;
+  } else {
+    resMinutes = `${minutes}`;
+  }
+  if (sec < 10) {
+    resSec = `0${sec}`;
+  } else {
+    resSec = `${sec}`;
+  }
+  if (millisec !== 0) {
+    resMilli = `${millisec}`;
+  } else {
+    resMilli = '000';
+  }
+  return `${resHours}:${resMinutes}:${resSec}.${resMilli}`;
 }
-
 
 /**
  * Returns the angle (in radians) between the hands of an analog clock
@@ -94,8 +131,27 @@ function timeSpanToString(/* startDate, endDate */) {
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  const d = new Date(date);
+  const minutes = d.getMinutes();
+  const hours = d.getUTCHours();
+  let angleH = 0.5 * (60 * hours + minutes);
+  const angleM = 6 * minutes;
+  while (angleH > 180) {
+    angleH -= 180;
+  }
+  let angleHandM = angleM - angleH;
+  if (angleHandM === -180) {
+    return (Math.abs(angleHandM) * Math.PI) / 180;
+  }
+  if (angleHandM < 0) {
+    angleHandM += 180;
+  }
+  if (angleHandM > 90) {
+    angleHandM -= 180;
+  }
+  const rad = (Math.abs(angleHandM) * Math.PI) / 180;
+  return rad;
 }
 
 

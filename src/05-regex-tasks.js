@@ -32,7 +32,7 @@
  * @return {RegExp}
  */
 function getRegexForGuid() {
-  throw new Error('Not implemented');
+  return /{[A-Fa-f0-9]{8}-([0-9a-fA-F]{4}-){3}[A-Fa-f0-9]{12}}/;
 }
 
 
@@ -54,7 +54,7 @@ function getRegexForGuid() {
  *
  */
 function getRegexForPitSpot() {
-  throw new Error('Not implemented');
+  return /.*p[aio ]t.*/;
 }
 
 
